@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08090d">
+<title>TSWAT BONE</title>
+<style>
+:root{--bg:#08090d;--panel:#101219;--muted:#858995;--white:#c7c9d1;--cyan:#29e6ff;--pink:#ff2d86;--violet:#a45bff;--red:#ff394f}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--white);font-family:Inter,Segoe UI,Arial,sans-serif;background:
+radial-gradient(ellipse at 15% 15%,#24102c 0,transparent 35%),
+radial-gradient(ellipse at 85% 25%,#092631 0,transparent 32%),
+linear-gradient(145deg,#07080c,#0c0d13 55%,#08090d);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(#252832 1px,transparent 1px),linear-gradient(90deg,#252832 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,#000,transparent 85%)}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.28}
+.wrap{position:relative;z-index:1;width:min(920px,92%);margin:auto;padding:35px 0 28px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#858995;font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.status{display:flex;align-items:center;gap:8px}.dot{width:7px;height:7px;border-radius:50%;background:#48ff9a;box-shadow:0 0 12px #48ff9a}
+.hero{text-align:center;padding:55px 10px 35px}
+.kicker{font-size:11px;letter-spacing:5px;color:#9b9eaa;margin-bottom:15px}
+h1{margin:0;font-size:clamp(42px,9vw,82px);font-weight:950;letter-spacing:4px;line-height:1.05;color:#d7d8df;text-shadow:0 0 10px #ffffff20,0 0 28px #a45bff55;animation:flicker 5s infinite}
+h1 span{background:linear-gradient(90deg,var(--cyan),#a45bff,var(--pink),var(--cyan));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+.subtitle{margin:17px 0 0;color:#777b88;font-size:12px;letter-spacing:3px}
+.line{height:1px;width:min(420px,80%);margin:27px auto;background:linear-gradient(90deg,transparent,var(--cyan),var(--violet),var(--pink),transparent);box-shadow:0 0 13px #a45bff77}
+.music{margin:0 auto 28px;max-width:590px;padding:15px 17px;border:1px solid #333744;border-radius:15px;background:linear-gradient(120deg,#11141cdd,#0d1017ee);box-shadow:0 0 28px #0008,inset 0 0 22px #ffffff05}
+.music-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.music-title{font-size:12px;letter-spacing:1.5px;color:#c6c8d0}.music-title b{color:var(--cyan)}
+.music-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-small{border:1px solid #424958;background:#171b25;color:#c9cbd3;border-radius:9px;padding:9px 12px;font-size:11px;cursor:pointer}
+.btn-small:hover{border-color:var(--cyan);box-shadow:0 0 14px #29e6ff55}
+audio{width:100%;height:32px;margin-top:12px;filter:sepia(15%) saturate(70%);opacity:.88}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:0 auto;max-width:760px}
+.option{--glow:var(--cyan);position:relative;min-height:112px;padding:19px 20px;border-radius:15px;border:1px solid color-mix(in srgb,var(--glow) 55%,#30333d);background:linear-gradient(135deg,#151821ed,#0d1017ed);color:#d3d4dc;text-align:left;cursor:pointer;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.option:before{content:"";position:absolute;inset:-1px;background:linear-gradient(115deg,transparent 20%,color-mix(in srgb,var(--glow) 16%,transparent),transparent 75%);transform:translateX(-110%);transition:transform .65s}
+.option:hover{transform:translateY(-3px);border-color:var(--glow);box-shadow:0 0 24px color-mix(in srgb,var(--glow) 25%,transparent)}
+.option:hover:before{transform:translateX(110%)}
+.option .num{font-size:10px;letter-spacing:2px;color:var(--glow);display:block;margin-bottom:10px}
+.option strong{font-size:clamp(14px,2.5vw,17px);letter-spacing:1.4px}
+.option .arrow{float:right;color:var(--glow);font-size:20px}
+.option:nth-child(1){--glow:var(--cyan)}.option:nth-child(2){--glow:var(--violet)}.option:nth-child(3){--glow:var(--pink)}.option:nth-child(4){--glow:#4d9dff}
+.note{text-align:center;color:#686d7a;font-size:11px;line-height:1.7;margin:24px auto 0;max-width:620px}
+footer{text-align:center;color:#555a66;font-size:10px;letter-spacing:2px;margin-top:38px}
+.modal{position:fixed;inset:0;z-index:5;background:#020308d9;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}.dialog{width:min(420px,100%);padding:24px;border-radius:16px;background:#11141c;border:1px solid #454b5a;box-shadow:0 0 35px #a45bff22}
+.dialog h2{font-size:17px;letter-spacing:2px;margin:0 0 10px;color:#e0e1e7}.dialog p{font-size:13px;line-height:1.7;color:#9296a3}
+.dialog input{width:100%;padding:12px;border-radius:9px;border:1px solid #3b4050;background:#090b11;color:#e2e3e8;margin:8px 0 14px;outline:none}
+.actions{display:flex;gap:9px;justify-content:flex-end}.primary{background:#242036;border:1px solid #a45bff;color:#eee}.palette{display:flex;gap:10px;margin:15px 0}.swatch{width:34px;height:34px;border-radius:50%;border:2px solid #ffffff55;cursor:pointer}
+@keyframes flow{to{background-position:300% 0}}
+@keyframes flicker{0%,94%,100%{opacity:1}95%{opacity:.8}97%{opacity:.95}}
+@media(max-width:560px){.wrap{padding-top:22px}.hero{padding:48px 5px 28px}.grid{grid-template-columns:1fr;gap:11px}.option{min-height:88px}.top{font-size:9px}.music{padding:13px}}
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<main class="wrap">
+  <div class="top"><span>TSWAT NETWORK / 2026</span><span class="status"><i class="dot"></i> SYSTEM ONLINE</span></div>
+  <header class="hero">
+    <div class="kicker">WELCOME TO THE UNDERGROUND</div>
+    <h1>TSWAT <span>BONE</span></h1>
+    <p class="subtitle">ACCESS • STYLE • CONTROL</p>
+    <div class="line"></div>
+  </header>
+
+  <section class="music">
+    <div class="music-head">
+      <div class="music-title"><b>♪ AUDIO SYSTEM</b> / NUTHIN' BUT A G THANG</div>
+      <div class="music-controls">
+        <label class="btn-small" for="audioFile">CHOOSE MP3</label>
+        <button class="btn-small" id="playBtn" type="button">PLAY / PAUSE</button>
+        <input id="audioFile" type="file" accept="audio/*,.mp3" hidden>
+      </div>
+    </div>
+    <audio id="player" controls preload="none"></audio>
+  </section>
+
+  <section class="grid" aria-label="Main options">
+    <button class="option" data-action="vip"><span class="num">OPTION 01</span><strong>VIP ACCESS</strong><span class="arrow">↗</span></button>
+    <button class="option" data-action="trial"><span class="num">OPTION 02</span><strong>VIP TRIAL — 1 DAY</strong><span class="arrow">↗</span></button>
+    <button class="option" data-action="colors"><span class="num">OPTION 03</span><strong>NAME COLORS</strong><span class="arrow">↗</span></button>
+    <button class="option" data-action="facebook"><span class="num">OPTION 04</span><strong>CONTACT FACEBOOK</strong><span class="arrow">↗</span></button>
+  </section>
+  <p class="note">Select an option to continue. VIP activation and trial access need a connected authentication system.<br>Audio can be selected from your phone's Downloads folder.</p>
+  <footer>TSWAT BONE © 2026 — ALL RIGHTS RESERVED</footer>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+ <div class="dialog">
+  <h2 id="modalTitle">TSWAT BONE</h2>
+  <div id="modalBody"></div>
+  <div class="actions"><button class="btn-small" id="closeModal" type="button">CLOSE</button><button class="btn-small primary" id="confirmBtn" type="button" style="display:none">CONTINUE</button></div>
+ </div>
+</div>
+<script>
+const player=document.getElementById('player');
+const fileInput=document.getElementById('audioFile');
+fileInput.addEventListener('change',()=>{const file=fileInput.files&&fileInput.files[0];if(!file)return; if(player.dataset.url)URL.revokeObjectURL(player.dataset.url);const url=URL.createObjectURL(file);player.dataset.url=url;player.src=url;player.play().catch(()=>{});});
+document.getElementById('playBtn').addEventListener('click',()=>{if(!player.src){fileInput.click();return;}if(player.paused)player.play().catch(()=>{});else player.pause();});
+const modal=document.getElementById('modal'),body=document.getElementById('modalBody'),title=document.getElementById('modalTitle'),confirm=document.getElementById('confirmBtn');
+function show(name,content,action){title.textContent=name;body.innerHTML=content;confirm.style.display=action?'inline-block':'none';confirm.onclick=action||null;modal.classList.add('show');}
+document.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
+ const action=btn.dataset.action;
+ if(action==='facebook'){window.open('https://www.facebook.com/amar.rebba','_blank','noopener');return;}
+ if(action==='vip'||action==='trial'){
+  show(action==='vip'?'VIP ACCESS':'VIP TRIAL — 1 DAY',
+   '<p>Enter your access key to continue. This screen is ready for connection to your secure VIP authentication server.</p><input id="vipKey" type="text" placeholder="Enter VIP key" autocomplete="off">');
+  return;
+ }
+ if(action==='colors'){
+  show('NAME COLORS','<p>Choose a preview color for your name:</p><div class="palette"><button class="swatch" style="background:#29e6ff" data-color="#29e6ff" aria-label="Cyan"></button><button class="swatch" style="background:#a45bff" data-color="#a45bff" aria-label="Violet"></button><button class="swatch" style="background:#ff2d86" data-color="#ff2d86" aria-label="Pink"></button><button class="swatch" style="background:#ff394f" data-color="#ff394f" aria-label="Red"></button><button class="swatch" style="background:#55ff9a" data-color="#55ff9a" aria-label="Green"></button></div><p id="colorPreview" style="font-size:22px;font-weight:900;letter-spacing:2px">TSWAT BONE</p>');
+  body.querySelectorAll('.swatch').forEach(s=>s.addEventListener('click',()=>document.getElementById('colorPreview').style.color=s.dataset.color));
+ }
+}));
+document.getElementById('closeModal').addEventListener('click',()=>modal.classList.remove('show'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('show')});
+// Decorative falling code
+const canvas=document.getElementById('matrix'),ctx=canvas.getContext('2d');let cols=[],font=14;
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;cols=Array(Math.ceil(canvas.width/font)).fill(0).map(()=>Math.random()*-80);}
+resize();addEventListener('resize',resize);
+const chars='01アカサタナハマヤラワ<>[]{}#@$%';
+function draw(){ctx.fillStyle='rgba(5,7,12,.12)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font=font+'px monospace';cols.forEach((y,i)=>{const hue=(i*17+Date.now()/45)%360;ctx.fillStyle=`hsla(${hue},85%,62%,.8)`;ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*font,y*font);if(y*font>canvas.height&&Math.random()>.975)cols[i]=0;cols[i]+=.65;});requestAnimationFrame(draw);}draw();
+</script>
+</body>
+      </html>
